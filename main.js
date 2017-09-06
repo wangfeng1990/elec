@@ -12,28 +12,41 @@ const url = require('url')
 let mainWindow
 
 function createWindow () {
-   // �������ڲ�����ҳ��
-  mainWindow = new BrowserWindow({width: 500, height: 600})
+   // 创建窗口并加载页面
+  mainWindow = new BrowserWindow({width: 800, height: 600})
 
-  // and load the index.html of the app.
-  mainWindow.loadURL(url.format({
+  const URL = url.format({
     pathname: path.join(__dirname, 'index.html'),
+    // 协议
     protocol: 'file:',
+    // 是否有斜杠
     slashes: true
-  }))
-
+  })
+  // and load the index.html of the app.
+  mainWindow.loadURL(URL);
+mainWindow.webContents.openDevTools()//开启调试工具
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 
-  // Emitted when the window is closed.
+  // 窗口关闭监听
   mainWindow.on('closed', function () {
-    // Dereference the window object, usually you would store windows
-    // in an array if your app supports multi windows, this is the time
-    // when you should delete the corresponding element.
+    //win对象：是你应用的主窗口，被声明成null，否则当JavaScript垃圾回收掉这个对象时，窗口会被关闭。
     mainWindow = null
   })
+//当应用捕获resize事件，BrowserWindow会重新加载
+  mainWindow.on('resize', () => {
+      mainWindow.reload()
+  })
+
+  // require('./main-process/menu.js')
+  // require('./main-process/msg-a.js')
+  //  require('./main-process/tray.js')
+  // require('./main-process/dialog.js')
 }
 
+
+// 这个是设置快捷键，不能放在createWindow 里面
+require('./main-process/shortcut.js')
 // This method will be called when Electron has finished
 // initialization and is ready to create browser windows.
 // Some APIs can only be used after this event occurs.
